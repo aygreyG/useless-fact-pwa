@@ -1,0 +1,5 @@
+<div *ngIf="fact$ | async as fact">
+  <div>{{ fact.text }}</div>
+  <div>{{ fact.permalink }}</div>
+</div>
+<button (click)="updateFact()">New Fact</button>

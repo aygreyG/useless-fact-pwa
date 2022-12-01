@@ -1,27 +1,28 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, from, Observable, Subject, switchMap } from 'rxjs';
 import Fact from '../models/Fact';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FactApiService {
+  public readonly factSubject$: Subject<Fact>;
 
-  constructor() { }
-
-  getRandomFact(): Observable<Fact> {
-    return from(
-      fetch('https://uselessfacts.jsph.pl/random.json?language=en')
-    ).pipe(
-      switchMap(res => res.json())
-    );
+  constructor() {
+    this.factSubject$ = new Subject();
   }
 
-  getToday(): Observable<Fact> {
-    return from(
-      fetch('https://uselessfacts.jsph.pl/today.json?language=en')
-    ).pipe(
-      switchMap(res => res.json())
-    );
+  getRandomFact(): void {
+    fetch('https://uselessfacts.jsph.pl/random.json?language=en')
+    .then(res => res.json())
+    .then(data => this.factSubject$.next(data))
+    .catch(err => console.error(err));
+  }
+
+  getToday(): void {
+    fetch('https://uselessfacts.jsph.pl/today.json?language=en')
+    .then(res => res.json())
+    .then(data => this.factSubject$.next(data))
+    .catch(err => console.error(err));
   }
 }

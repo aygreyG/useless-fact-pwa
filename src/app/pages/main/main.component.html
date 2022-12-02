@@ -1,5 +1,6 @@
 <div *ngIf="fact$ | async as fact">
   <div>{{ fact.text }}</div>
   <div>{{ fact.permalink }}</div>
+  <button (click)="addFavourite(fact)">Add as favourite</button>
 </div>
 <button (click)="updateFact()">New Fact</button>

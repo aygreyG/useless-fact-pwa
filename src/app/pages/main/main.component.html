@@ -1,6 +1,25 @@
-<div *ngIf="fact$ | async as fact">
-  <div>{{ fact.text }}</div>
-  <div>{{ fact.permalink }}</div>
-  <button mat-raised-button color="primary" (click)="addFavourite(fact)">Add as favourite</button>
-  <button mat-raised-button color="primary" (click)="updateFact()">New Fact</button>
-</div>
+<mat-card class="fact-card" *ngIf="fact$ | async as fact">
+  <mat-card-title>
+    {{ fact.text }}
+  </mat-card-title>
+  <mat-card-actions class="fact-button-container" align="end">
+    <button
+      class="fact-button"
+      mat-raised-button
+      color="primary"
+      (click)="updateFact()"
+    >
+      Get random Fact
+    </button>
+    <ng-container *ngIf="factIds$ | async as favIds">
+      <button
+        mat-icon-button
+        (click)="toggleFavourite(fact, favIds.includes(fact.id))"
+      >
+        <mat-icon>
+          {{ favIds.includes(fact.id) ? "star" : "star_border" }}
+        </mat-icon>
+      </button>
+    </ng-container>
+  </mat-card-actions>
+</mat-card>

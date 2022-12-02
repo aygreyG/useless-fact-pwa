@@ -1,1 +1,22 @@
-<p>favourite works!</p>
+<div *ngIf="fact$ | async as facts">
+  <ng-container *ngIf="facts.length > 0">
+    <div style="text-align: center; margin: 1em 0">
+      <button (click)="clearFacts()" mat-raised-button color="warn">
+        Clear favourite facts
+      </button>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="facts.length == 0">
+    <div style="text-align: center; margin: 1em 0">
+      <h2>There are no favourites saved!</h2>
+    </div>
+  </ng-container>
+  <mat-card *ngFor="let fact of facts" class="fact-card">
+    <mat-card-title>{{ fact.text }}</mat-card-title>
+    <mat-card-actions class="fact-card-actions" align="end">
+      <button mat-icon-button (click)="deleteFact(fact.id)">
+        <mat-icon>star</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

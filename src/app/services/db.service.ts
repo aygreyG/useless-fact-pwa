@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, switchMap } from 'rxjs';
+import { Observable, startWith, Subject, switchMap } from 'rxjs';
 import Fact from '../models/Fact';
 
 @Injectable({
@@ -8,6 +8,7 @@ import Fact from '../models/Fact';
 export class DbService {
   private readonly update$ = new Subject<void>();
   private db$: Observable<IDBDatabase>;
+  public fact$: Observable<Fact[]>;
 
   constructor() {
     this.db$ = new Observable<IDBDatabase>((observer) => {
@@ -18,6 +19,27 @@ export class DbService {
         observer.complete();
       };
     });
+
+    this.fact$ = this.update$.pipe(
+      startWith(undefined),
+      switchMap(() =>
+        this.db$.pipe(
+          switchMap(
+            (db) =>
+              new Observable<Fact[]>((observer) => {
+                let transaction: IDBTransaction | null =
+                  db.transaction('facts');
+                const request = transaction.objectStore('facts').getAll();
+                transaction.oncomplete = () => {
+                  transaction = null;
+                  observer.next(request.result as Fact[]);
+                  observer.complete();
+                };
+              })
+          )
+        )
+      )
+    );
   }
 
   private createDb(db: IDBDatabase): void {
@@ -26,58 +48,72 @@ export class DbService {
   }
 
   public async addFact(fact: Fact) {
-    console.log(fact);
-    this.db$.pipe(
-      switchMap(
-        (db) =>
-          new Observable((observer) => {
-            let transaction: IDBTransaction | null = db.transaction('facts', 'readwrite');
-            transaction.objectStore('facts').add(fact);
-            transaction.oncomplete = () => {
-              transaction = null;
-              this.update$.next();
-              observer.complete();
-            };
-            return () => transaction?.abort();
-          })
+    this.db$
+      .pipe(
+        switchMap(
+          (db) =>
+            new Observable((observer) => {
+              let transaction: IDBTransaction | null = db.transaction(
+                'facts',
+                'readwrite'
+              );
+              transaction.objectStore('facts').add(fact);
+              transaction.oncomplete = () => {
+                transaction = null;
+                this.update$.next();
+                observer.complete();
+              };
+              return () => transaction?.abort();
+            })
+        )
       )
-    ).subscribe();
+      .subscribe();
   }
 
   public deleteFact(id: string) {
-    this.db$.pipe(
-      switchMap(
-        (db) =>
-          new Observable((observer) => {
-            let transaction: IDBTransaction | null = db.transaction('facts', 'readwrite');
-            transaction.objectStore('facts').delete(id);
-            transaction.oncomplete = () => {
-              transaction = null;
-              this.update$.next();
-              observer.complete();
-            };
-            return () => transaction?.abort();
-          })
+    this.db$
+      .pipe(
+        switchMap(
+          (db) =>
+            new Observable((observer) => {
+              let transaction: IDBTransaction | null = db.transaction(
+                'facts',
+                'readwrite'
+              );
+              transaction.objectStore('facts').delete(id);
+              transaction.oncomplete = () => {
+                transaction = null;
+                this.update$.next();
+                observer.complete();
+              };
+              return () => transaction?.abort();
+            })
+        )
       )
-    ).subscribe();
+      .subscribe();
   }
 
   public clearFacts(): void {
-    this.db$.pipe(
-      switchMap(
-        (db) =>
-          new Observable((observer) => {
-            let transaction: IDBTransaction | null = db.transaction('facts', 'readwrite');
-            transaction.objectStore('facts').clear();
+    this.db$
+      .pipe(
+        switchMap(
+          (db) =>
+            new Observable((observer) => {
+              let transaction: IDBTransaction | null = db.transaction(
+                'facts',
+                'readwrite'
+              );
+              transaction.objectStore('facts').clear();
 
-            transaction.oncomplete = () => {
-              transaction = null;
-              this.update$.next();
-              observer.complete();
-            };
-            return () => transaction?.abort();
-          })
+              transaction.oncomplete = () => {
+                transaction = null;
+                this.update$.next();
+                observer.complete();
+              };
+              return () => transaction?.abort();
+            })
+        )
       )
-    ).subscribe();
+      .subscribe();
   }
 }

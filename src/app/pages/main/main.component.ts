@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { lastValueFrom, map, Observable, Subject } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import Fact from 'src/app/models/Fact';
 import { DbService } from 'src/app/services/db.service';
 import { FactApiService } from 'src/app/services/fact-api.service';
@@ -16,10 +16,10 @@ export class MainComponent implements OnInit {
   constructor(private factApi: FactApiService, private db: DbService) {
     this.fact$ = factApi.factSubject$;
     this.factIds$ = db.fact$.pipe(
-      map(favourites => favourites.map(el => el.id))
+      map((favourites) => favourites.map((el) => el.id))
     );
   }
-  
+
   ngOnInit(): void {
     this.getToday();
   }
@@ -32,7 +32,7 @@ export class MainComponent implements OnInit {
     this.factApi.getToday();
   }
 
-  public async toggleFavourite(fact: Fact, included : boolean) {
+  public async toggleFavourite(fact: Fact, included: boolean) {
     if (included) {
       this.db.deleteFact(fact.id);
     } else {

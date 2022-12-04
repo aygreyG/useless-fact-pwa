@@ -4,3 +4,7 @@
   text-align: center;
   max-width: 500px;
 }
+
+.fact-button {
+  margin: auto 0.5em;
+}

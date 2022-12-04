@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, Subject, switchMap } from 'rxjs';
+import { Subject } from 'rxjs';
 import Fact from '../models/Fact';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FactApiService {
   public readonly factSubject$: Subject<Fact>;
@@ -14,15 +14,15 @@ export class FactApiService {
 
   getRandomFact(): void {
     fetch('https://uselessfacts.jsph.pl/random.json?language=en')
-    .then(res => res.json())
-    .then(data => this.factSubject$.next(data))
-    .catch(err => console.error(err));
+      .then((res) => res.json())
+      .then((data) => this.factSubject$.next(data))
+      .catch((err) => console.error(err));
   }
 
   getToday(): void {
     fetch('https://uselessfacts.jsph.pl/today.json?language=en')
-    .then(res => res.json())
-    .then(data => this.factSubject$.next(data))
-    .catch(err => console.error(err));
+      .then((res) => res.json())
+      .then((data) => this.factSubject$.next(data))
+      .catch((err) => console.error(err));
   }
 }

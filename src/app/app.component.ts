@@ -27,11 +27,11 @@ export class AppComponent implements OnInit {
   }
 
   private checkUpdate() {
-    this.update.checkForUpdate().then(canUpdate => {
+    this.update.checkForUpdate().then((canUpdate) => {
       if (canUpdate) {
         alert('There is a new version available!');
         window.location.reload();
       }
-    })
+    });
   }
 }

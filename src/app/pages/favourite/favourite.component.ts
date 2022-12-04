@@ -6,7 +6,7 @@ import { DbService } from 'src/app/services/db.service';
 @Component({
   selector: 'app-favourite',
   templateUrl: './favourite.component.html',
-  styleUrls: ['./favourite.component.css']
+  styleUrls: ['./favourite.component.css'],
 })
 export class FavouriteComponent implements OnInit {
   public fact$: Observable<Fact[]>;
@@ -15,8 +15,7 @@ export class FavouriteComponent implements OnInit {
     this.fact$ = db.fact$;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public deleteFact(id: string) {
     this.db.deleteFact(id);

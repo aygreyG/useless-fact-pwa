@@ -8,7 +8,7 @@ import Fact from '../models/Fact';
 export class FactApiService {
   public readonly factSubject$: Subject<Fact>;
   private ENDPOINT =
-    'https://cors.gyergya.workers.dev/proxy/https://uselessfacts.jsph.pl/api/v2/facts';
+    'https://cors.gyergya.workers.dev/proxy/?apiurl=https://uselessfacts.jsph.pl/api/v2/facts';
 
   constructor() {
     this.factSubject$ = new Subject();
